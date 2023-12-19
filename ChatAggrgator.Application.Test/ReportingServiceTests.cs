@@ -38,14 +38,14 @@ namespace ChatAggregator.Domain.Test
                 { "17/12/2023 - 13:25", new List<ChatEvent>() { new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom } } }
             };
 
-            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.ByMinute };
+            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Minute };
             _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
             _aggregateServiceMock.Setup(ags => ags.GetAggregatedResults(aggregation)).Returns(aggEvents);
 
             var report = _reportingService.GetReport(aggregation);
             Assert.NotNull(report);
-            Assert.Contains("Kate enters the room", report.First().Item2);
-            Assert.Contains("Bob leaves", report.Last().Item2);
+            Assert.Contains("Kate enters the room", report.First().EventReport);
+            Assert.Contains("Bob leaves", report.Last().EventReport);
         }
 
         [Fact]
@@ -71,16 +71,16 @@ namespace ChatAggregator.Domain.Test
                  new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom } } }
             };
 
-            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Hourly };
+            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Hour };
             _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
             _aggregateServiceMock.Setup(ags => ags.GetAggregatedResults(aggregation)).Returns(aggEvents);
 
             var report = _reportingService.GetReport(aggregation);
             Assert.NotNull(report);
             Assert.Single(report);
-            Assert.Contains("2 person(s) entered", report.First().Item2);
-            Assert.Contains("2 person(s) left", report.First().Item2);
-            Assert.Contains("1 person(s) high-fived 1 other person(s)", report.First().Item2);
+            Assert.Contains("2 person(s) entered", report.First().EventReport);
+            Assert.Contains("2 person(s) left", report.First().EventReport);
+            Assert.Contains("1 person(s) high-fived 1 other person(s)", report.First().EventReport);
 
         }
 
@@ -97,15 +97,15 @@ namespace ChatAggregator.Domain.Test
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom }
             };
 
-            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.NoGranularity };
+            var aggregation = new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.None };
             _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
             //_aggregateServiceMock.Setup(ags => ags.GetAggregatedResults(aggregation)).Returns(aggEvents);
 
             var report = _reportingService.GetReport(aggregation);
 
             Assert.NotNull(report);
-            Assert.Contains("Kate enters the room", report.First().Item2);
-            Assert.Contains("Bob leaves", report.Last().Item2);
+            Assert.Contains("Kate enters the room", report.First().EventReport);
+            Assert.Contains("Bob leaves", report.Last().EventReport);
         }
 
     }

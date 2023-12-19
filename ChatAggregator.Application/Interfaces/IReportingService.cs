@@ -9,6 +9,6 @@ namespace ChatAggregator.Application.Interfaces
 {
     public interface IReportingService
     {
-        ICollection<Tuple<string, string>> GetReport(AggregationForm aggregation);
+        ICollection<ChatEventResult> GetReport(AggregationForm aggregation);
     }
 }

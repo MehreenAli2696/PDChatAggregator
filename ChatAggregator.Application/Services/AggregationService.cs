@@ -25,19 +25,19 @@ namespace ChatAggregator.Application.Services
             var events = this._chatFetchingService.FetchChatEvents();
             switch (aggregationForm.Granularity)
             {
-                case Granularity.ByMinute:
+                case Granularity.Minute:
                     return events
                         .Where(e => e.Time >= aggregationForm.StartTime && e.Time <= aggregationForm.EndTime)
                         .GroupBy(e => new { e.Time.Date, e.Time.Hour, e.Time.Minute })
                         .ToDictionary(g => $"{g.Key.Date.ToString("dd/MM/yyyy")} - {g.Key.Hour}:{g.Key.Minute.ToString("00")}", g => g.ToList()) ;   
                     
-                case Granularity.Hourly:
+                case Granularity.Hour:
                     return events
                         .Where(e => e.Time >= aggregationForm.StartTime && e.Time <= aggregationForm.EndTime)
                         .GroupBy(e => new { e.Time.Date, e.Time.Hour })
                         .ToDictionary(g => $"{g.Key.Date.ToString("dd/MM/yyyy")} - {g.Key.Hour}:00", g => g.ToList());
 
-                case Granularity.NoGranularity:
+                case Granularity.None:
                     //TO-DO
                     throw new ArgumentOutOfRangeException();
             }

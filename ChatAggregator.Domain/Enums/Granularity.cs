@@ -8,8 +8,8 @@ namespace ChatAggregator.Domain.Enums
 {
     public enum Granularity
     {
-        NoGranularity = 0,
-        ByMinute = 1,
-        Hourly = 2
+        None,
+        Minute,
+        Hour
     }
 }

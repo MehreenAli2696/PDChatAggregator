@@ -29,7 +29,7 @@ namespace ChatAggregator.Domain.Test
             var firstEventDate = DateTime.Parse("2023-12-17 13:00:00");
             _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
 
-            var aggResults = _aggregationService.GetAggregatedResults(new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.ByMinute });
+            var aggResults = _aggregationService.GetAggregatedResults(new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Minute });
             
 
             Assert.Contains("Kate",aggResults.First().Value.First().SenderName);
@@ -53,7 +53,7 @@ namespace ChatAggregator.Domain.Test
 
             _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
 
-            var aggResults = _aggregationService.GetAggregatedResults(new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Hourly });
+            var aggResults = _aggregationService.GetAggregatedResults(new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.Hour });
 
             Assert.Contains("Kate", aggResults.First().Value.First().SenderName.ToString());
             Assert.Equal($"{firstEventDate.ToString("dd/MM/yyyy")} - {firstEventDate.Hour}:00", aggResults.First().Key);

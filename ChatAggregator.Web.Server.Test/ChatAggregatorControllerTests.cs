@@ -19,8 +19,8 @@ namespace ChatAggregator.Server.Test
         [Fact]
         public void GetChatReport_Should_Return_Expected_Report()
         {
-            var expectedReport = new List<Tuple<string, string>>() { new Tuple<string,string>( "Expected Key", "Expected Value" ) };
-            var aggregation = new Domain.ModelEntities.AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.NoGranularity };
+            var expectedReport = new List<ChatEventResult>() { new ChatEventResult() { Time = "Expected Key", EventReport = "Expected Value" } };
+            var aggregation = new Domain.ModelEntities.AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.None };
             _reportingServiceMock.Setup(r => r.GetReport(It.IsAny<AggregationForm>())).Returns(expectedReport);
 
             var result = _chatAggregatorController.GetChatReport(aggregation.Granularity, aggregation.StartTime, aggregation.EndTime);
