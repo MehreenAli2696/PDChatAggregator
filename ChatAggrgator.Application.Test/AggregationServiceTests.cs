@@ -21,8 +21,8 @@ namespace ChatAggregator.Domain.Test
             {
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:00:00"), SenderName = "Kate", Type = ChatEventType.EnterRoom },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:05:00"), SenderName = "Bob", Type = ChatEventType.EnterRoom },
-                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", RecieverName = "Kate" },
-                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, RecieverName = "Bob" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", ReceiverName = "Kate" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, ReceiverName = "Bob" },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:20:00"), SenderName = "Kate", Type = ChatEventType.LeaveRoom },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom }
             };
@@ -44,8 +44,8 @@ namespace ChatAggregator.Domain.Test
             {
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:00:00"), SenderName = "Kate", Type = ChatEventType.EnterRoom },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:05:00"), SenderName = "Bob", Type = ChatEventType.EnterRoom },
-                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", RecieverName = "Kate" },
-                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, RecieverName = "Bob" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", ReceiverName = "Kate" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, ReceiverName = "Bob" },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:20:00"), SenderName = "Kate", Type = ChatEventType.LeaveRoom },
                 new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom }
             };

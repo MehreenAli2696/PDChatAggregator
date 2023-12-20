@@ -1,95 +1,131 @@
 ﻿using ChatAggregator.Domain.Enums;
-using ChatAggregator.Domain;
 using ChatAggregator.Application.Interfaces;
 using ChatAggregator.Domain.ModelEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace ChatAggregator.Application.Services
 {
     public class ReportingService : IReportingService
     {
-        private IAggregationService _aggregationService;
-        private IChatFetchingService _chatFetchingService;
-        public ReportingService(IAggregationService aggregationService, IChatFetchingService chatFetchingService) {
-            this._aggregationService = aggregationService;
-            this._chatFetchingService = chatFetchingService;
-        }   
+        private readonly IAggregationService _aggregationService;
+        private readonly IChatFetchingService _chatFetchingService;
+
+        public ReportingService(IAggregationService aggregationService, IChatFetchingService chatFetchingService)
+        {
+            _aggregationService = aggregationService;
+            _chatFetchingService = chatFetchingService;
+        }
 
         public ICollection<ChatEventResult> GetReport(AggregationForm aggregation)
         {
-            if(aggregation.Granularity == Granularity.None)
+            if (aggregation.Granularity == Granularity.None)
             {
-                var chatevents = _chatFetchingService.FetchChatEvents().Where(e => e.Time >= aggregation.StartTime && e.Time <= aggregation.EndTime) ;
+                var chatEvents = _chatFetchingService.FetchChatEvents()
+                    .Where(e => e.Time >= aggregation.StartTime && e.Time <= aggregation.EndTime);
 
-                return RenderNonAggregatedReport(chatevents);
+                return RenderNonAggregatedReport(chatEvents);
             }
 
-            var result = this._aggregationService.GetAggregatedResults(aggregation);
+            var result = _aggregationService.GetAggregatedResults(aggregation);
 
             return RenderAggregatedReport(result, aggregation.Granularity);
         }
 
-        private ICollection<ChatEventResult> RenderNonAggregatedReport(IEnumerable<ChatEvent> chatevents)
+        private List<ChatEventResult> RenderNonAggregatedReport(IEnumerable<ChatEvent> chatEvents)
         {
-            var report = new List<ChatEventResult>();
-            var value = new StringBuilder();
+            return chatEvents.Select(chatEvent => new ChatEventResult { Time = $"{chatEvent.Time:dd/MM/yyyy} - {chatEvent.Time.Hour}:{chatEvent.Time.Minute:00}:{chatEvent.Time.Millisecond:00}", EventReport = ChatEventToString(chatEvent) }).ToList();
+        }
 
-            foreach(ChatEvent chatEvent in chatevents)
+        // private ICollection<ChatEventResult> RenderAggregatedReport (Dictionary<string, List<ChatEvent>> aggregatedEvents, Granularity granularity)
+        // {
+        //     var report = new List<ChatEventResult>();
+        //
+        //     foreach (var aggregation in aggregatedEvents)
+        //     {
+        //         var value = new StringBuilder();
+        //         switch(granularity)
+        //         {
+        //             case Granularity.Minute:
+        //                 foreach (var eventItem in aggregation.Value)
+        //                 {
+        //                     value.AppendLine($"{eventItem.Time.ToString("dd/MM/yyyy")} - {eventItem.Time.Hour}:{eventItem.Time.Minute.ToString("00")}:{eventItem.Time.Millisecond.ToString("00")} : {ChatEventToString(eventItem)}");
+        //                 }
+        //                 break;
+        //             case Granularity.Hour:
+        //                 var events = aggregation.Value;
+        //
+        //                 var enters = events.Count(e => e.Type == ChatEventType.EnterRoom);
+        //                 var leaves = events.Count(e => e.Type == ChatEventType.EnterRoom);
+        //                 var comments = events.Count(e => e.Type == ChatEventType.Comment);
+        //                 var highFivesSender = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.SenderName)
+        //                     .Distinct().Count();
+        //                 var highFivesOtherUser = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.ReceiverName)
+        //                     .Distinct().Count();
+        //
+        //                 if (enters > 0)
+        //                     value.AppendLine($"\t{enters} person(s) entered");
+        //                 if (leaves > 0)
+        //                     value.AppendLine($"\t{leaves} person(s) left");
+        //                 if (highFivesSender > 0)
+        //                     value.AppendLine($"\t{highFivesSender} person(s) high-fived {highFivesOtherUser} other person(s)");
+        //                 if (comments > 0)
+        //                     value.AppendLine($"\t{comments} comment(s)");
+        //                 break;
+        //         }
+        //
+        //         report.Add(new ChatEventResult() { Time = aggregation.Key, EventReport = value.ToString() });
+        //
+        //     }
+        //
+        //     return report;
+        // }
+
+
+        private ICollection<ChatEventResult> RenderAggregatedReport(Dictionary<string, List<ChatEvent>> aggregatedEvents, Granularity granularity)
+        {
+            ArgumentNullException.ThrowIfNull(aggregatedEvents);
+
+            var report = new List<ChatEventResult>();
+            foreach (var aggregation in aggregatedEvents)
             {
-                report.Add(new ChatEventResult() { Time = $"{chatEvent.Time.ToString("dd/MM/yyyy")} - {chatEvent.Time.Hour}:{chatEvent.Time.Minute.ToString("00")}:{chatEvent.Time.Millisecond.ToString("00")}", EventReport = ChatEventToString(chatEvent) });
+                string value = granularity switch
+                {
+                    Granularity.Minute => RenderMinuteAggregation(aggregation.Value),
+                    Granularity.Hour => RenderHourAggregation(aggregation.Value),
+                    _ => throw new ArgumentOutOfRangeException(nameof(granularity))
+                };
+                report.Add(new ChatEventResult() { Time = aggregation.Key, EventReport = value });
             }
-            
             return report;
         }
 
-        private ICollection<ChatEventResult> RenderAggregatedReport (Dictionary<string, List<ChatEvent>> aggregatedEvents, Granularity granularity)
+        private string RenderMinuteAggregation(List<ChatEvent> events)
         {
-            //StringBuilder result = new StringBuilder();
-            var report = new List<ChatEventResult>();
-
-            foreach (var aggregation in aggregatedEvents)
+            var sb = new StringBuilder();
+            foreach (var eventItem in events)
             {
-                var value = new StringBuilder();
-                switch(granularity)
-                {
-                    case Granularity.Minute:
-                        foreach (var eventItem in aggregation.Value)
-                        {
-                            value.AppendLine($"{eventItem.Time.ToString("dd/MM/yyyy")} - {eventItem.Time.Hour}:{eventItem.Time.Minute.ToString("00")}:{eventItem.Time.Millisecond.ToString("00")} : {ChatEventToString(eventItem)}");
-                        }
-                        break;
-                    case Granularity.Hour:
-                        var events = aggregation.Value;
-
-                        var enters = events.Count(e => e.Type == ChatEventType.EnterRoom);
-                        var leaves = events.Count(e => e.Type == ChatEventType.EnterRoom);
-                        var comments = events.Count(e => e.Type == ChatEventType.Comment);
-                        var highFivesSender = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.SenderName)
-                            .Distinct().Count();
-                        var highFivesOtherUser = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.RecieverName)
-                            .Distinct().Count();
-
-                        if (enters > 0)
-                            value.AppendLine($"\t{enters} person(s) entered");
-                        if (leaves > 0)
-                            value.AppendLine($"\t{leaves} person(s) left");
-                        if (highFivesSender > 0)
-                            value.AppendLine($"\t{highFivesSender} person(s) high-fived {highFivesOtherUser} other person(s)");
-                        if (comments > 0)
-                            value.AppendLine($"\t{comments} comment(s)");
-                        break;
-                }
-
-                report.Add(new ChatEventResult() { Time = aggregation.Key, EventReport = value.ToString() });
-
+                sb.AppendLine($"{eventItem.Time:dd/MM/yyyy HH:mm:ss.fff} : {ChatEventToString(eventItem)}");
             }
+            return sb.ToString();
+        }
 
-            return report;
+        private string RenderHourAggregation(List<ChatEvent> events)
+        {
+            var sb = new StringBuilder();
+            var enters = events.Count(e => e.Type == ChatEventType.EnterRoom);
+            var leaves = events.Count(e => e.Type == ChatEventType.LeaveRoom);
+            var comments = events.Count(e => e.Type == ChatEventType.Comment);
+            var highFivesSender = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.SenderName)
+                             .Distinct().Count();
+            var highFivesOtherUser = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.ReceiverName)
+                             .Distinct().Count();
+
+            sb.AppendLineIf(enters > 0, $"{enters} person(s) entered");
+            sb.AppendLineIf(leaves > 0, $"{leaves} person(s) left");
+            sb.AppendLineIf(highFivesSender > 0, $"{highFivesSender} person(s) high-fived {highFivesOtherUser} other person(s)");
+            sb.AppendLineIf(comments > 0, $"{comments} comment(s)");
+
+            return sb.ToString();
         }
 
         private string ChatEventToString(ChatEvent singleEvent)
@@ -106,7 +142,7 @@ namespace ChatAggregator.Application.Services
                     return $"{singleEvent.SenderName} comments: \"{singleEvent.Message}\"";
 
                 case ChatEventType.HighFive:
-                    return $"{singleEvent.SenderName} high-fives {singleEvent.RecieverName}";
+                    return $"{singleEvent.SenderName} high-fives {singleEvent.ReceiverName}";
 
                 default:
                     throw new ArgumentException("Chat Event not recognized");

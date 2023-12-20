@@ -1,4 +1,3 @@
-using ChatAggregator.Domain.ModelEntities;
 using ChatAggregator.Application.Interfaces;
 using ChatAggregator.Infrastructure.Fetcher;
 
