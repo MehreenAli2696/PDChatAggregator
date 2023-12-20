@@ -28,3 +28,5 @@ This is a .NET 8 + ReactJS application that provides chat room interface in whic
    `npm run build`
    `npm run dev` 
 7. Access the Web UI by opening the local endpoint shown on command prompt. It is configured to be `https://localhost:5173/`
+
+![alt text](https://github.com/MehreenAli2696/PDChatAggregator/blob/main/Demo.gif)
