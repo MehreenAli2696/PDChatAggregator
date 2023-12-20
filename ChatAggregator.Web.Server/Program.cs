@@ -17,11 +17,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IChatFetchingService, ChatFetchingService>();
 builder.Services.AddScoped<IAggregationService, AggregationService>();
 builder.Services.AddScoped<IReportingService, ReportingService>();
+builder.Services.AddCors((options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+}));
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

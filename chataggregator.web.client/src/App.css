@@ -2,15 +2,17 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
-    text-align: center;
+    text-align: left;
 }
 
 tr:nth-child(even) {
     background: #F2F2F2;
+    color: black;
 }
 
 tr:nth-child(odd) {
     background: #FFF;
+    color: black;
 }
 
 th, td {
