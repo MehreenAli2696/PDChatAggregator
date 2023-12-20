@@ -27,4 +27,4 @@ This is a .NET 8 + ReactJS application that provides chat room interface in whic
 6. Run commands `npm install`
    `npm run build`
    `npm run dev` 
-7. Access the Web UI by opening the local endpoint shown on command prompt. It is configured to be `https://localhost:5173/`
+7. Navigate to the local endpoint shown on command prompt. It is configured to be `https://localhost:5173/`
