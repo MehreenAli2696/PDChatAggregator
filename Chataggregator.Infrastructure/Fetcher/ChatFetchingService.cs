@@ -10,11 +10,9 @@ namespace ChatAggregator.Infrastructure.Fetcher
         {
             var chatevents = new List<ChatEvent>()
             {
-                new (){ Time = DateTime.Parse("2023-12-17 13:00:00"), SenderName = "Kate", Type = ChatEventType.EnterRoom},
                 new () { Time = DateTime.Parse("2023-12-17 13:00:00"), SenderName = "Kate", Type = ChatEventType.EnterRoom},
                 new () { Time = DateTime.Parse("2023-12-17 13:05:00"), SenderName = "Bob", Type = ChatEventType.EnterRoom },
                 new () { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", ReceiverName = "Kate" },
-                new () { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, ReceiverName = "Bob" },
                 new () { Time = DateTime.Parse("2023-12-17 13:18:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom },
                 new () { Time = DateTime.Parse("2023-12-17 13:20:00"), SenderName = "Kate", Type = ChatEventType.Comment, Message = "Oh, typical" },
                 new () { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Kate", Type = ChatEventType.LeaveRoom },

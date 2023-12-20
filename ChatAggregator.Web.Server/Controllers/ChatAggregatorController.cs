@@ -16,9 +16,6 @@ namespace ChatAggregator.Web.Server.Controllers
         }
 
         [HttpGet(Name = "GetAggregatedChatReport")]
-        // TO-DO
-        // May be lets make this a DTO and apply fluent validations here on DTO ?
-        // Something like AggregationForm. So that we can get rid of multiple arguments here?
         public ICollection<ChatEventResult> GetChatReport(Granularity granularity, DateTime startTime, DateTime endTime)
         {
 

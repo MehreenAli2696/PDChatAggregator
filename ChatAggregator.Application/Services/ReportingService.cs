@@ -36,51 +36,6 @@ namespace ChatAggregator.Application.Services
             return chatEvents.Select(chatEvent => new ChatEventResult { Time = $"{chatEvent.Time:dd/MM/yyyy} - {chatEvent.Time.Hour}:{chatEvent.Time.Minute:00}:{chatEvent.Time.Millisecond:00}", EventReport = ChatEventToString(chatEvent) }).ToList();
         }
 
-        // private ICollection<ChatEventResult> RenderAggregatedReport (Dictionary<string, List<ChatEvent>> aggregatedEvents, Granularity granularity)
-        // {
-        //     var report = new List<ChatEventResult>();
-        //
-        //     foreach (var aggregation in aggregatedEvents)
-        //     {
-        //         var value = new StringBuilder();
-        //         switch(granularity)
-        //         {
-        //             case Granularity.Minute:
-        //                 foreach (var eventItem in aggregation.Value)
-        //                 {
-        //                     value.AppendLine($"{eventItem.Time.ToString("dd/MM/yyyy")} - {eventItem.Time.Hour}:{eventItem.Time.Minute.ToString("00")}:{eventItem.Time.Millisecond.ToString("00")} : {ChatEventToString(eventItem)}");
-        //                 }
-        //                 break;
-        //             case Granularity.Hour:
-        //                 var events = aggregation.Value;
-        //
-        //                 var enters = events.Count(e => e.Type == ChatEventType.EnterRoom);
-        //                 var leaves = events.Count(e => e.Type == ChatEventType.EnterRoom);
-        //                 var comments = events.Count(e => e.Type == ChatEventType.Comment);
-        //                 var highFivesSender = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.SenderName)
-        //                     .Distinct().Count();
-        //                 var highFivesOtherUser = events.Where(e => e.Type == ChatEventType.HighFive).Select(e => e.ReceiverName)
-        //                     .Distinct().Count();
-        //
-        //                 if (enters > 0)
-        //                     value.AppendLine($"\t{enters} person(s) entered");
-        //                 if (leaves > 0)
-        //                     value.AppendLine($"\t{leaves} person(s) left");
-        //                 if (highFivesSender > 0)
-        //                     value.AppendLine($"\t{highFivesSender} person(s) high-fived {highFivesOtherUser} other person(s)");
-        //                 if (comments > 0)
-        //                     value.AppendLine($"\t{comments} comment(s)");
-        //                 break;
-        //         }
-        //
-        //         report.Add(new ChatEventResult() { Time = aggregation.Key, EventReport = value.ToString() });
-        //
-        //     }
-        //
-        //     return report;
-        // }
-
-
         private ICollection<ChatEventResult> RenderAggregatedReport(Dictionary<string, List<ChatEvent>> aggregatedEvents, Granularity granularity)
         {
             ArgumentNullException.ThrowIfNull(aggregatedEvents);
@@ -104,7 +59,7 @@ namespace ChatAggregator.Application.Services
             var sb = new StringBuilder();
             foreach (var eventItem in events)
             {
-                sb.AppendLine($"{eventItem.Time:dd/MM/yyyy HH:mm:ss.fff} : {ChatEventToString(eventItem)}");
+                sb.AppendLine(ChatEventToString(eventItem));
             }
             return sb.ToString();
         }

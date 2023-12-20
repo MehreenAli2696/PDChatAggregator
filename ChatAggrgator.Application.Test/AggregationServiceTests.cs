@@ -64,6 +64,20 @@ namespace ChatAggregator.Domain.Test
         [Fact]
         public void GetAggregatedResults_Should_Return_Error_When_NoGranularity()
         {
+            var events = new List<ChatEvent>()
+            {
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:00:00"), SenderName = "Kate", Type = ChatEventType.EnterRoom },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:05:00"), SenderName = "Bob", Type = ChatEventType.EnterRoom },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:15:00"), SenderName = "Bob", Type = ChatEventType.Comment, Message = "Hey, Kate - high five?", ReceiverName = "Kate" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:17:00"), SenderName = "Kate", Type = ChatEventType.HighFive, ReceiverName = "Bob" },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:20:00"), SenderName = "Kate", Type = ChatEventType.LeaveRoom },
+                new ChatEvent() { Time = DateTime.Parse("2023-12-17 13:25:00"), SenderName = "Bob", Type = ChatEventType.LeaveRoom }
+            };
+
+            _chatFetchingServiceMock.Setup(fs => fs.FetchChatEvents()).Returns(events);
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => _aggregationService.GetAggregatedResults(new AggregationForm() { StartTime = DateTime.Parse("2023-12-16 13:00:00"), EndTime = DateTime.Parse("2023-12-18 13:00:00"), Granularity = Granularity.None }));
 
         }
     }
